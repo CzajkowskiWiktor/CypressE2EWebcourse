@@ -64,6 +64,16 @@ export class NavigationPage{
         cy.contains("Register").click()
     }
 
+    requestPasswordPage(){
+        selectGroupMenuItem("Auth")
+        cy.contains("Request Password").click()
+    }
+
+    resetPasswordPage(){
+        selectGroupMenuItem("Auth")
+        cy.contains("Reset Password").click()
+    }
+
 }
 
 export const navigateTo = new NavigationPage()
