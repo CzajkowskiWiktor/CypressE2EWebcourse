@@ -4,6 +4,10 @@ import { onFormLayoutsPage } from "../support/page_objects/formLayoutsPage"
 import { navigateTo } from "../support/page_objects/navigationPage"
 import { onSmartTablePage } from "../support/page_objects/smartTablePage"
 import { onStepperPage } from "../support/page_objects/stepperPage"
+import { onAccordionPage } from "../support/page_objects/accordionPage"
+import { onCalendarPage } from "../support/page_objects/calendarPage"
+import { onLoginPage } from "../support/page_objects/loginPage"
+import { onRegisterPage } from "../support/page_objects/registerPage"
 
 describe("New tests out of course", () =>
 {
@@ -117,166 +121,76 @@ describe("New tests out of course", () =>
 
     it('calendar select date', () =>
     {
-        function selectDay(day)
-        {
-            //get today date
-            let date = new Date()
-            date.setDate(date.getDate()+day)
-            let futureDay = date.getDate()
-            let futureMonth = date.toLocaleString('en-GB', {month: 'short'})
-            let futureYear = date.getFullYear()
-            let dateAssert = futureMonth+' '+futureDay+', '+futureYear
-            cy.log(dateAssert)
-
-            //select a date
-            cy.get('nb-card')
-            .eq(0)
-            .find('nb-calendar-navigation')
-            .invoke('attr', 'ng-reflect-date')
-            .then( dateAtrr =>
-            {
-                if(!dateAtrr.includes(futureMonth))
-                {
-                    cy.get('[data-name="chevron-right"]').first().click()
-                    selectDay(day)
-                } else {
-                    cy.get('nb-calendar-day-picker').eq(0).find('[class="day-cell ng-star-inserted"]').contains(futureDay).click()
-                    // cy.get('.calendar-container').find('.subtitle').eq(0).should('contain', dateAssert)
-                }
-                
-            })
-
-            return dateAssert
-        }
-
-        cy.contains("Extra Components").click()
-        cy.contains("Calendar").click()
-
-        let dateAssert = selectDay(13)
-
-        //check if the selected date and today is equal to today
-        cy.get('.calendar-container').find('.subtitle').eq(0).should('contain', dateAssert)
-        // cy.get('.title').eq(0).should('contain', dateAssert)
-
-       
+        navigateTo.calendarPage()
+        onCalendarPage.selectDayFromCalendar(13)       
     })
 
     it("calender select range", () =>
     {
-        function selectDay(day)
-        {
-            //get today date
-            let date = new Date()
-            date.setDate(date.getDate()+day)
-            let futureDay = date.getDate()
-            let futureMonth = date.toLocaleString('en-GB', {month: 'short'})
-            let futureYear = date.getFullYear()
-            let dateAssert = futureMonth+' '+futureDay+', '+futureYear
-            cy.log(dateAssert)
-
-            //select a date
-            cy.get('nb-card')
-            .eq(1)
-            .find('nb-calendar-navigation')
-            .invoke('attr', 'ng-reflect-date')
-            .then( dateAtrr =>
-            {
-                if(!dateAtrr.includes(futureMonth))
-                {
-                    cy.get('[data-name="chevron-right"]').eq(1).click()
-                    selectDay(day)
-                } else {
-                    // cy.get('nb-calendar-range-day-cell')
-                    cy.get('nb-calendar-range-day-cell').find('.day-cell').not('.bounding-month').contains(futureDay).click()
-                    // cy.get('.calendar-container').find('.subtitle').eq(0).should('contain', dateAssert)
-                }
-                
-            })
-
-            return dateAssert
-        }
-
-        cy.contains("Extra Components").click()
-        cy.contains("Calendar").click()
-
-        let dateAssertFirst = selectDay(19)
-        let dateAssertSecond = selectDay(26)
-
-        const finalDate = dateAssertFirst + " - " + dateAssertSecond
-        cy.log(finalDate)
-        //check if the selected date and today is equal to today
-        cy.get('.calendar-container').find('.subtitle').eq(1).should('contain', finalDate)
+        navigateTo.calendarPage()
+        onCalendarPage.selectRangeDaysFromCalendar(10,19)
     })
 
     it('Select date and check the price', () =>
     {
-        function checkPriceInDay(day, price)
-        {
-            //get today date
-            let date = new Date()
-            date.setDate(date.getDate()+day)
-            let futureDay = date.getDate()
-            let futureMonth = date.toLocaleString('en-GB', {month: 'short'})
-            let futureYear = date.getFullYear()
-            let dateAssert = futureMonth+' '+futureDay+', '+futureYear
-
-            //select a date
-            cy.get('nb-card')
-            .eq(2)
-            .find('nb-calendar-navigation')
-            .invoke('attr', 'ng-reflect-date')
-            .then( dateAtrr =>
-            {
-                if(!dateAtrr.includes(futureMonth))
-                {
-                    cy.get('[data-name="chevron-right"]').eq(2).click()
-                    selectDay(day)
-                } else {
-                    cy.get('nb-calendar-day-picker')
-                        .eq(2)
-                        .find('[class="day-cell ng-star-inserted"]')
-                        .not('.bounding-month')
-                        .find('div')
-                        .contains(futureDay)
-                        .next()
-                        .then(moneyText =>
-                        {
-                            //compare the price in that day from provided
-                            expect(moneyText.text()).to.equal(price+"$")
-                        })
-                        .click()
-                        
-                    // cy.get('.calendar-container').find('.subtitle').eq(0).should('contain', dateAssert)
-                }
-            })
-            return dateAssert
-        }
-
-        cy.contains("Extra Components").click()
-        cy.contains("Calendar").click()
-
-        //check price in searched day and click it
-        let dateClicked = checkPriceInDay(5, 1989)
-        cy.get('.calendar-container').find('.subtitle').eq(2).should('contain', dateClicked)
-
+        navigateTo.calendarPage()
+        onCalendarPage.checkPriceinCurrentDay(5, 2124)
     })
 
-    it.only("stepper horizontal test", () =>
+    it("stepper horizontal test", () =>
     {
         navigateTo.stepperPage()
         onStepperPage.goThroughStepContentHorizontal()
     })
 
-    it.only('Wizard completed', () => 
+    it('Wizard completed', () => 
     {
         navigateTo.stepperPage()
         onStepperPage.completeWizard()
     })
 
-    it.only("stepper vertical test", () =>
+    it("stepper vertical test", () =>
     {
         navigateTo.stepperPage()
         onStepperPage.goThroughStepContentVertical()
+    })
+
+    it("toggle first item tests", () =>
+    {
+        const textExpanded = "A nebula is an interstellar cloud of dust, hydrogen, helium and other ionized gases. Originally, nebula was a name for any diffuse astronomical object, including galaxies beyond the Milky Way."
+        navigateTo.accordionPage()
+        onAccordionPage.clickFirstAccordion(textExpanded)
+    })
+
+    it('toggle three accordion items', () =>
+    {
+        const textsExpanded = ["A nebula is an interstellar cloud of dust, hydrogen, helium and other ionized gases.",
+            "Originally, nebula was a name for any diffuse astronomical object,",
+            "including galaxies beyond the Milky Way"]
+        navigateTo.accordionPage()
+        onAccordionPage.checkAndToggleThreeAccordionItem(textsExpanded)
+        
+    })
+
+    it('successful login auth test', () =>
+    {
+        navigateTo.loginPage()
+        onLoginPage.submitLoginForm('test@test.com', 'test1234')
+    })
+
+    it('successful register auth test', () =>
+    {
+        const fullName = 'David Test'
+        const email = 'david@test.com'
+        const password = 'test123'
+        const repassword = 'test123'
+        navigateTo.registerPage()
+        onRegisterPage.successfulRegister(fullName, email, password, repassword)
+    })
+
+    it.only('failed register auth test - length of password', () =>
+    {
+
     })
 
 })

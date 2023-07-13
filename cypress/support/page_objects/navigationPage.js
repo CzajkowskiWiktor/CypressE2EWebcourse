@@ -44,6 +44,26 @@ export class NavigationPage{
         cy.contains("Stepper").click()
     }
 
+    accordionPage(){
+        selectGroupMenuItem("Layout")
+        cy.contains("Accordion").click()
+    }
+
+    calendarPage(){
+        selectGroupMenuItem("Extra Components")
+        cy.contains("Calendar").click()
+    }
+
+    loginPage(){
+        selectGroupMenuItem("Auth")
+        cy.contains("Login").click()
+    }
+
+    registerPage(){
+        selectGroupMenuItem("Auth")
+        cy.contains("Register").click()
+    }
+
 }
 
 export const navigateTo = new NavigationPage()
