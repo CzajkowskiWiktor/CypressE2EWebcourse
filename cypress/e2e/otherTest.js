@@ -10,6 +10,9 @@ import { onLoginPage } from "../support/page_objects/loginPage"
 import { onRegisterPage } from "../support/page_objects/registerPage"
 import { onRequestPasswordPage } from "../support/page_objects/requestPasswordPage"
 import { onResetPasswordPage } from "../support/page_objects/resetPasswordPage"
+import { onToastrPage } from "../support/page_objects/toastrPage"
+import { onTooltipPage } from "../support/page_objects/tooltipPage"
+import { Button } from "bootstrap"
 
 describe("New tests out of course", () =>
 {
@@ -239,7 +242,7 @@ describe("New tests out of course", () =>
         onRequestPasswordPage.submitResetPassword(email)
     })
 
-    it.only('reset a password', () =>
+    it('reset a password', () =>
     {
         const password = 'test1234'
         const repassword = 'test1234'
@@ -247,12 +250,185 @@ describe("New tests out of course", () =>
         onResetPasswordPage.submitChangePassword(password, repassword)
     })
 
-    it.only('Difference in pass and repass in reset Password form', () =>
+    it('Difference in pass and repass in reset Password form', () =>
     {
         const password = 'test12'
         const repassword = 'test1234'
         navigateTo.resetPasswordPage()
         onResetPasswordPage.differenceInPassAndRepass(password,repassword)
+    })
+
+    it('check boxes', () =>
+    {
+        navigateTo.toastrPage()
+
+        //it does not uncheck the checked boxes - to uncheck you need to click
+        //it only works on input elements
+        cy.get('[type="checkbox"]').check({force: true})
+        cy.get('[type="checkbox"]').eq(0).click({force: true})
+    })
+
+    it('Colored tooltips', () =>
+    {
+        navigateTo.tooltipPage()
+        onTooltipPage.checkColoredTooltips()
+    })
+
+    it('Tooltip placements', () =>
+    {
+        navigateTo.tooltipPage()
+        onTooltipPage.checkTooltipPlacements()
+    })
+
+    it('tooltip with icon', ()=>
+    {
+        navigateTo.tooltipPage()
+        onTooltipPage.chceckTooltipWithIcon()
+    })
+
+    it('show toast message with all checkboxes', () =>
+    {
+        navigateTo.toastrPage()
+        onToastrPage.showToastMessage('top-left','title','example content','2500', 'success')
+    })
+
+    it('show toast message and delete it by clicking it', () =>
+    {
+        navigateTo.toastrPage()
+        onToastrPage.showToastAndDeleteItByClicking('top-left','title','example content','2500', 'success')
+    })
+
+    it('show toast message and click it but hide unchecked', () =>
+    {
+        navigateTo.toastrPage()
+        onToastrPage.showToastAndClickButDoNotDisappear('top-left','title','example content','2500', 'success')
+    })
+
+    it('show toast message without icon', () =>
+    {
+        navigateTo.toastrPage()
+        onToastrPage.showToastMessageWihtoutIcon('top-left','title','example content','2500', 'success')
+    })
+
+    it('get random toast message', () =>
+    {
+        navigateTo.toastrPage()
+        onToastrPage.showRandomToastMessage()
+    })
+
+    it('check popover positions', () =>
+    {
+        function checkPopover(position){
+            //get left button and verify popover
+            cy.get('[nbpopoverplacement="'+position+'"]').click()
+            cy.get('nb-popover').should('have.class', 'nb-overlay-'+position).and('contain','Hello, how are you today?')
+        }
+        const positionPop = ['left', 'top', 'bottom', 'right']
+        navigateTo.popoverPage()
+        // checkPopover('top')
+        cy.contains('nb-card', 'Popover Position').then(card =>
+            {
+                //check title
+                cy.wrap(card).find('nb-card-header').should('contain', 'Popover Position')
+                //check body text
+                cy.wrap(card).find('nb-card-body').find('p').should('contain', 'When popover has')
+                //get left button and verify popover
+                // cy.wrap(card).find('[nbpopoverplacement="'+position+'"]').click()
+                // cy.get('nb-popover').should('have.class', 'nb-overlay-'+position).and('contain','Hello, how are you today?')
+                positionPop.forEach(item =>
+                {
+                    checkPopover(item)
+                })
+            })
+    })
+
+    it('check simple popovers', () =>
+    {
+        navigateTo.popoverPage()
+        cy.contains('nb-card', 'Simple Popovers').then(card =>
+        {
+                //check title
+                cy.wrap(card).find('nb-card-header').should('contain', 'Simple Popovers')
+                //check body text
+                cy.wrap(card).find('nb-card-body').find('p').should('contain', 'In a simples form popover')
+                //buttons
+                cy.wrap(card).find('button').each((item, index) =>
+                {
+                    cy.wrap(item).click()
+                    cy.get('nb-popover').should('have.class', 'nb-overlay-top').and('contain','Hello, how are you today?')
+                })
+                // cy.wrap(card).contains('on click').click()
+                // cy.get('nb-popover').should('have.class', 'nb-overlay-top').and('contain','Hello, how are you today?')
+                // cy.wrap(card).find('[nbpopovertrigger="hover"]').click()
+                // cy.get('nb-popover').should('have.class', 'nb-overlay-top').and('contain','Hello, how are you today?')
+                // cy.wrap(card).find('[nbpopovertrigger="hint"]').click()
+                // cy.get('nb-popover').should('have.class', 'nb-overlay-top').and('contain','Hello, how are you today?')
+        })
+    })
+
+    it('check template popovers with item', () =>
+    {
+        navigateTo.popoverPage()
+        cy.contains('nb-card', 'Template Popovers').then(card =>
+        {
+            //check title
+            cy.wrap(card).find('nb-card-header').should('contain', 'Template Popovers')
+            //check body text
+            cy.wrap(card).find('nb-card-body').find('p').should('contain', 'You can pass a refference')
+            //find button with tabs
+            cy.wrap(card).contains('With tabs').click()
+            //form popover
+            cy.get('nb-popover').then(popoverForm =>
+            {
+                //whatsup tab
+                cy.wrap(popoverForm)
+                    .find('nb-tabset')
+                    .find('li.active')
+                    .should('contain', "What's up")
+                    .parents('nb-tabset')
+                    .find('nb-tab.content-active')
+                    .should('contain', 'Such a wonderful day')
+
+                //second tab
+                cy.wrap(popoverForm)
+                    .find('nb-tabset')
+                    .find('li')
+                    .contains('Second Tab')
+                    .click()
+                    .parents('nb-tabset')
+                    .contains('li', 'Second Tab')
+                    .should('have.class', 'active')
+                    .parents('nb-tabset')
+                    .find('nb-tab.content-active')
+                    .should('contain', 'Indeed!')
+            })
+        })
+    })
+
+    it.only('check template popovers with form', () =>
+    {
+        navigateTo.popoverPage()
+        cy.contains('nb-card', 'Template Popovers').then(card =>
+            {
+                //check title
+                cy.wrap(card).find('nb-card-header').should('contain', 'Template Popovers')
+                //check body text
+                cy.wrap(card).find('nb-card-body').find('p').should('contain', 'You can pass a refference')
+                //find button with tabs
+                cy.wrap(card).contains('With form').click()
+                //form popover
+                cy.get('nb-popover').then(popoverForm =>
+                {
+                    //placeholders input
+                    cy.wrap(popoverForm).find('[placeholder="Recipients"]').type('test@test.com')
+                    //subject input
+                    cy.wrap(popoverForm).find('[placeholder="Subject"]').type('Test popover')
+                    //message input
+                    cy.wrap(popoverForm).find('[placeholder="Message"]').type('This is my test popover tab')
+                    //button send message
+                    cy.wrap(popoverForm).find('button').click()
+                })
+            })
     })
 
 })

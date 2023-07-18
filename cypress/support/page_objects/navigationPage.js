@@ -39,6 +39,21 @@ export class NavigationPage{
         cy.contains("Tooltip").click()
     }
 
+    popoverPage(){
+        selectGroupMenuItem("Modal & Overlays")
+        cy.contains("Popover").click()
+    }
+
+    windowPage(){
+        selectGroupMenuItem("Modal & Overlays")
+        cy.contains("Window").click()
+    }
+
+    dialogPage(){
+        selectGroupMenuItem("Modal & Overlays")
+        cy.contains("Dialog").click()
+    }
+
     stepperPage(){
         selectGroupMenuItem("Layout")
         cy.contains("Stepper").click()
