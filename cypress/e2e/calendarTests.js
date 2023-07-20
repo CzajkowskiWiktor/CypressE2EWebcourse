@@ -24,7 +24,31 @@ describe("Testing calendar tab", () =>
     it('Select date and check the price', () =>
     {
         navigateTo.calendarPage()
-        onCalendarPage.checkPriceinCurrentDay(5, 2124)
+        onCalendarPage.checkPriceInCurrentDay(2, 2684)
+    })
+
+    it('Verify and Choose the min price of month', ()=>
+    {
+        navigateTo.calendarPage()
+        onCalendarPage.checkAndSelectTheMinPriceOfMonth(1)
+    })
+
+    it('Verify and Choose the max price of month', ()=>
+    {
+        navigateTo.calendarPage()
+        onCalendarPage.checkAndSelectTheMaxPriceOfMonth(31)
+    })
+
+    it('Get the day of Max price', () =>
+    {
+        navigateTo.calendarPage()
+        onCalendarPage.getDayOfTheMaxPrice()
+    })
+
+    it('Get the day of Min price', () =>
+    {
+        navigateTo.calendarPage()
+        onCalendarPage.getDayOfTheMinPrice()
     })
 
 })
