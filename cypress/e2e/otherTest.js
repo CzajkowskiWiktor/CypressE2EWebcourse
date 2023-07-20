@@ -12,7 +12,10 @@ import { onRequestPasswordPage } from "../support/page_objects/requestPasswordPa
 import { onResetPasswordPage } from "../support/page_objects/resetPasswordPage"
 import { onToastrPage } from "../support/page_objects/toastrPage"
 import { onTooltipPage } from "../support/page_objects/tooltipPage"
-import { Button } from "bootstrap"
+import { onDialogPage } from "../support/page_objects/dialogPage"
+import { onPopoverPage } from "../support/page_objects/popoverPage"
+import { onWindowPage } from "../support/page_objects/windowPage"
+
 
 describe("New tests out of course", () =>
 {
@@ -316,119 +319,94 @@ describe("New tests out of course", () =>
         onToastrPage.showRandomToastMessage()
     })
 
-    it('check popover positions', () =>
+    it.only('check popover positions', () =>
     {
-        function checkPopover(position){
-            //get left button and verify popover
-            cy.get('[nbpopoverplacement="'+position+'"]').click()
-            cy.get('nb-popover').should('have.class', 'nb-overlay-'+position).and('contain','Hello, how are you today?')
-        }
         const positionPop = ['left', 'top', 'bottom', 'right']
         navigateTo.popoverPage()
-        // checkPopover('top')
-        cy.contains('nb-card', 'Popover Position').then(card =>
-            {
-                //check title
-                cy.wrap(card).find('nb-card-header').should('contain', 'Popover Position')
-                //check body text
-                cy.wrap(card).find('nb-card-body').find('p').should('contain', 'When popover has')
-                //get left button and verify popover
-                // cy.wrap(card).find('[nbpopoverplacement="'+position+'"]').click()
-                // cy.get('nb-popover').should('have.class', 'nb-overlay-'+position).and('contain','Hello, how are you today?')
-                positionPop.forEach(item =>
-                {
-                    checkPopover(item)
-                })
-            })
+        onPopoverPage.checkPopoverPositionOnPage(positionPop)
     })
 
-    it('check simple popovers', () =>
+    it.only('check simple popovers', () =>
     {
         navigateTo.popoverPage()
-        cy.contains('nb-card', 'Simple Popovers').then(card =>
-        {
-                //check title
-                cy.wrap(card).find('nb-card-header').should('contain', 'Simple Popovers')
-                //check body text
-                cy.wrap(card).find('nb-card-body').find('p').should('contain', 'In a simples form popover')
-                //buttons
-                cy.wrap(card).find('button').each((item, index) =>
-                {
-                    cy.wrap(item).click()
-                    cy.get('nb-popover').should('have.class', 'nb-overlay-top').and('contain','Hello, how are you today?')
-                })
-                // cy.wrap(card).contains('on click').click()
-                // cy.get('nb-popover').should('have.class', 'nb-overlay-top').and('contain','Hello, how are you today?')
-                // cy.wrap(card).find('[nbpopovertrigger="hover"]').click()
-                // cy.get('nb-popover').should('have.class', 'nb-overlay-top').and('contain','Hello, how are you today?')
-                // cy.wrap(card).find('[nbpopovertrigger="hint"]').click()
-                // cy.get('nb-popover').should('have.class', 'nb-overlay-top').and('contain','Hello, how are you today?')
-        })
+        onPopoverPage.checkSimplePopovers()
     })
 
-    it('check template popovers with item', () =>
+    it.only('check template popovers with item', () =>
     {
         navigateTo.popoverPage()
-        cy.contains('nb-card', 'Template Popovers').then(card =>
-        {
-            //check title
-            cy.wrap(card).find('nb-card-header').should('contain', 'Template Popovers')
-            //check body text
-            cy.wrap(card).find('nb-card-body').find('p').should('contain', 'You can pass a refference')
-            //find button with tabs
-            cy.wrap(card).contains('With tabs').click()
-            //form popover
-            cy.get('nb-popover').then(popoverForm =>
-            {
-                //whatsup tab
-                cy.wrap(popoverForm)
-                    .find('nb-tabset')
-                    .find('li.active')
-                    .should('contain', "What's up")
-                    .parents('nb-tabset')
-                    .find('nb-tab.content-active')
-                    .should('contain', 'Such a wonderful day')
-
-                //second tab
-                cy.wrap(popoverForm)
-                    .find('nb-tabset')
-                    .find('li')
-                    .contains('Second Tab')
-                    .click()
-                    .parents('nb-tabset')
-                    .contains('li', 'Second Tab')
-                    .should('have.class', 'active')
-                    .parents('nb-tabset')
-                    .find('nb-tab.content-active')
-                    .should('contain', 'Indeed!')
-            })
-        })
+        onPopoverPage.checkTemplateWithItem()
     })
 
     it.only('check template popovers with form', () =>
     {
         navigateTo.popoverPage()
-        cy.contains('nb-card', 'Template Popovers').then(card =>
-            {
-                //check title
-                cy.wrap(card).find('nb-card-header').should('contain', 'Template Popovers')
-                //check body text
-                cy.wrap(card).find('nb-card-body').find('p').should('contain', 'You can pass a refference')
-                //find button with tabs
-                cy.wrap(card).contains('With form').click()
-                //form popover
-                cy.get('nb-popover').then(popoverForm =>
-                {
-                    //placeholders input
-                    cy.wrap(popoverForm).find('[placeholder="Recipients"]').type('test@test.com')
-                    //subject input
-                    cy.wrap(popoverForm).find('[placeholder="Subject"]').type('Test popover')
-                    //message input
-                    cy.wrap(popoverForm).find('[placeholder="Message"]').type('This is my test popover tab')
-                    //button send message
-                    cy.wrap(popoverForm).find('button').click()
-                })
-            })
+        onPopoverPage.checkTemplateWithForm()
+    })
+
+    it('check template popovers with card', () =>
+    {
+        navigateTo.popoverPage()
+        onPopoverPage.checkTemplateWithCard()
+    })
+
+    it.only('check all component popovers', () =>
+    {
+        navigateTo.popoverPage()
+        onPopoverPage.checkAllComponentPopovers()
+    })
+
+    it.only('fill window form, minimize, expand window and verify the text', () =>
+    {
+        const subject = 'Window test'
+        const text = 'Lorem ipsum the pi 3.14'
+        navigateTo.windowPage()
+        onWindowPage.fillWindowFormMinimizeExpandVerify(subject, text)
+    })
+
+    it.only('fill window form and close it', () =>
+    {
+        const subject = 'Window test'
+        const text = 'Lorem ipsum the pi 3.14'
+        navigateTo.windowPage()
+        onWindowPage.fillWindowForm(subject, text)
+    })
+
+    it.only('open window template and verify content', () =>
+    {
+        navigateTo.windowPage()
+        onWindowPage.checkWindowTemplate()
+    })
+
+    it.only('open window with backdrop', () =>
+    {
+        navigateTo.windowPage()
+        onWindowPage.openWindowWithBackdrop()
+    })
+
+    it.only('open window without backdrop', () =>
+    {
+        navigateTo.windowPage()
+        onWindowPage.openWindowWithoutBackdrop()
+    })
+
+    it('open dialog with component and then with template', () =>
+    {
+        navigateTo.dialogPage()
+        onDialogPage.openDialogWithCompAndTemplate()
+    })
+
+    it('open dialog with esc and then without esc to close', () =>
+    {
+        navigateTo.dialogPage()
+        onDialogPage.openDialogWithEscAndWithoutEscClose()
+    })
+
+    it('return result from dialog - provide 3 inputs', () =>
+    {
+        const names = ['John', 'Marcel', 'Edi']
+        navigateTo.dialogPage()
+        onDialogPage.provideNamesToDialog(names)
     })
 
 })
